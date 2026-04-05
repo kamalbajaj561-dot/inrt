@@ -1,5 +1,3 @@
-"""Backward-compatible launcher for JARVIS PRO."""
-
 from jarvis.main import main
 
 

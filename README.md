@@ -1,33 +1,47 @@
-# Local Voice Assistant (JARVIS-style, privacy-first + knowledgeable Q&A)
+# JARVIS PRO
 
-This project provides a **voice-enabled local assistant** that helps with coding, app management, and technical Q&A while keeping you in control.
+JARVIS PRO is a modular Python assistant with voice + CLI control, task routing, coding-agent workflows, and CEO-style business guidance for **INRT Wallet**.
 
-## Security first
+## Features
 
-A system with "complete control" is risky. This implementation intentionally adds guardrails:
+- Wake-word flow (`jarvis`) with always-listening voice mode
+- Intent routing (`whatsapp`, `open_app`, `search`, `play`, `system_control`, `coding`, `business`, `general_chat`)
+- Groq-backed response generation (Llama-family model) with local fallback
+- WhatsApp automation through desktop app workflow (not WhatsApp Web)
+- System controls with safety guardrails
+- Coding agent actions for INRT Wallet (open project, run dev server, debug and architecture guidance)
+- Business advisor mode for startup strategy and monetization ideas
+- Action logging with rotating file output
 
-- No hardcoded API keys
-- Explicit confirmation for risky actions
-- Allowlisted command execution (no arbitrary shell access)
-- Workspace-restricted file operations
-- Audit log of every action
+## Project structure
 
-## Knowledge features
+```
+jarvis/
+├── main.py
+├── voice/
+│   ├── listen.py
+│   └── speak.py
+├── ai/
+│   ├── brain.py
+│   ├── intent.py
+│   └── memory.py
+├── actions/
+│   ├── whatsapp.py
+│   ├── system.py
+│   ├── apps.py
+│   ├── web.py
+│   ├── coding_agent.py
+│   └── business_agent.py
+├── config/
+│   ├── settings.py
+│   ├── contacts.py
+│   └── websites.py
+└── utils/
+    ├── logger.py
+    └── helpers.py
+```
 
-- `jarvis ask <question>` for architecture/debugging/coding Q&A
-- `jarvis summarize file <path>` to explain a file
-- Lightweight conversation memory
-- Optional OpenAI-compatible backend for richer reasoning
-- Local fallback mode if no API key is configured
-
-## Modes
-
-- **Voice mode** (default): microphone + TTS
-- **Text mode**: easy to test and debug from terminal
-
-## Quick start
-
-1. Install dependencies:
+## Setup
 
 ```bash
 python -m venv .venv
@@ -35,39 +49,39 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-2. Configure your workspace path and allowlisted commands in `jarvis_assistant.py`.
-
-3. Set environment variables (recommended, do not paste keys into source files):
+Set optional environment variables:
 
 ```bash
-export OPENAI_API_KEY="your_key_here"
-export OPENAI_MODEL="gpt-4.1-mini"
-# optional:
-# export OPENAI_BASE_URL="https://api.openai.com/v1"
+export GROQ_API_KEY="your_key"
+export GROQ_MODEL="llama-3.3-70b-versatile"
+export INRT_WALLET_PATH="$HOME/projects/INRT-Wallet"
 ```
 
-4. Run:
+## Usage
+
+CLI mode:
 
 ```bash
-# voice mode
-python jarvis_assistant.py
-
-# text mode
-python jarvis_assistant.py --text
-
-# one-off command
-python jarvis_assistant.py --text --once "jarvis ask how to optimize postgres indexes"
+python main.py --mode cli --command "open my project"
+python main.py --mode cli --command "fix my wallet app error"
+python main.py --mode cli --command "give me growth ideas for INRT"
 ```
 
-## Example commands
+Voice mode:
 
-- `jarvis ask why is my API timing out`
-- `jarvis summarize file src/main.py`
-- `jarvis open file src/main.py`
-- `jarvis run tests`
-- `jarvis start app`
-- `jarvis stop app`
+```bash
+python main.py --mode voice
+```
 
-## Disclaimer
+Say wake-word **jarvis**, then command.
 
-Use responsibly and only on systems you own or are authorized to manage.
+## Safety model
+
+- High-risk system actions require explicit CLI confirmation (`--confirm`)
+- All actions are logged to `jarvis.log`
+- Exceptions are handled gracefully with clear error responses
+
+## Notes
+
+- WhatsApp automation relies on local GUI automation (`pyautogui`) and an installed app binary.
+- Some system commands are Linux oriented; adapt for your OS where needed.
